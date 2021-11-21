@@ -5,21 +5,18 @@ from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
 import datetime
 
-# Genero le chiavi
 private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 public_key = private_key.public_key()
 
-# Salvo la chiave sul disco
 with open('keyCA.pem', "wb") as key:
     key.write(private_key.private_bytes(encoding=serialization.Encoding.PEM,
                                         format=serialization.PrivateFormat.TraditionalOpenSSL,
-                                        encryption_algorithm=serialization.BestAvailableEncryption(b"passCA")))
+                                        encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase")))
 
-# Genero un certificato auto-firmato
 subject = issuer = x509.Name([
-    x509.NameAttribute(NameOID.COUNTRY_NAME, u"IT"),
-    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Napoli"),
-    x509.NameAttribute(NameOID.LOCALITY_NAME, u"Napoli"),
+    x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
+    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"CA"),
+    x509.NameAttribute(NameOID.LOCALITY_NAME, u"CA"),
     x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"Certification Authority"),
     x509.NameAttribute(NameOID.COMMON_NAME, u"certificationauthority.com")
 ])
