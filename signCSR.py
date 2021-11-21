@@ -19,7 +19,7 @@ def sign_csr(csr, ca_public_key, ca_private_key, filename):
     valid_from = datetime.datetime(year=2021, month=11, day=15).utcnow()
     valid_until = valid_from + datetime.timedelta(days=365)
     csr = x509.load_pem_x509_csr(csr, backend=default_backend())
-    ca_private_key = serialization.load_pem_private_key(ca_private_key, password=b"passCA", backend=default_backend())
+    ca_private_key = serialization.load_pem_private_key(ca_private_key, password=b"passphrase", backend=default_backend())
     ca_public_key = x509.load_pem_x509_certificate(ca_public_key, backend=default_backend())
 
     builder = (
