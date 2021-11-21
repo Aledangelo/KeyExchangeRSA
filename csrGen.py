@@ -23,13 +23,13 @@ subject = x509.Name([
 ])
 
 with open('key.pem', "rb") as f:
-    privateKey = serialization.load_pem_private_key(f.read(), password=b"serverPass")
+    privateKey = serialization.load_pem_private_key(f.read(), password=b"passphrase")
 
 builder = x509.CertificateSigningRequestBuilder().subject_name(subject)
 
 csr = builder.sign(privateKey, hashes.SHA256(), default_backend())
 
-with open('CSRserver.pem', 'wb') as csrfile:
+with open('csr.pem', 'wb') as csrfile:
     csrfile.write(csr.public_bytes(serialization.Encoding.PEM))
 
 
