@@ -91,7 +91,7 @@ def main():
                                        PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
                                        algorithm=hashes.SHA256()))
         except:
-            print('Messaggio corrotto')
+            print('Message is corrupt')
             sock.close()
             quit(0)
 
