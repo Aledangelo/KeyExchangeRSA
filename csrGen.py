@@ -15,14 +15,14 @@ def extract_certificate_and_key(pfx, password):
 
 
 subject = x509.Name([
-    x509.NameAttribute(NameOID.COUNTRY_NAME, u"IT"),
-    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Napoli"),
-    x509.NameAttribute(NameOID.LOCALITY_NAME, u"Napoli"),
+    x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
+    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Server"),
+    x509.NameAttribute(NameOID.LOCALITY_NAME, u"Server"),
     x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"Server"),
     x509.NameAttribute(NameOID.COMMON_NAME, u"server.com")
 ])
 
-with open('serverKey.pem', "rb") as f:
+with open('key.pem', "rb") as f:
     privateKey = serialization.load_pem_private_key(f.read(), password=b"serverPass")
 
 builder = x509.CertificateSigningRequestBuilder().subject_name(subject)
