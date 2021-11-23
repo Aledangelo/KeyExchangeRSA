@@ -1,6 +1,6 @@
 # KeyExchangeRSA
 ## Overview
-KeyExchangeRSA consists of two sockets, which implement secure communication via RS.
+KeyExchangeRSA consists of two sockets, which implement secure communication via RSA.
 
 ## Requirements
 You will need to install the following packages:
