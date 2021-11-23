@@ -5,15 +5,6 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
 
 
-def extract_certificate_and_key(pfx, password):
-    pfx = crypto.load_pkcs12(pfx, password)
-
-    key = crypto.dump_privatekey(crypto.FILETYPE_PEM, pfx.get_privatekey())
-
-    cert = crypto.dump_certificate(crypto.FILETYPE_PEM, pfx.get_certificate())
-    return key, cert
-
-
 subject = x509.Name([
     x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
     x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Server"),
