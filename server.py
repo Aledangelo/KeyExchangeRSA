@@ -64,11 +64,9 @@ def main():
     try:
         keep_alive = True
         while keep_alive:
-            # Prendo la socket del client, l'indirizzo ip e la porta
 
             (clientConn, clientAdd) = sock.accept()
 
-            # Ricevo il certificato dal client
             certificate = clientConn.recv(1220)
             certs = x509.load_pem_x509_certificate(certificate, default_backend())
 
@@ -80,12 +78,10 @@ def main():
                 sock.close()
                 quit(0)
 
-            # Estraggo il mio certificato e la mia chiave, ed invio il certificato
-            with open("serverKS.p12", "rb") as f:
+            with open("keystore.p12", "rb") as f:
                 key, cert = extract_certificate_and_key(f.read(), password=pswd.encode())
             clientConn.send(cert)
 
-            # Genero una chiave simmetrica e la cifro con la chiave pubblica del client
             sessionKey = urandom(16)
             cypher_msg = certs.public_key().encrypt(plaintext=sessionKey,
                                                     padding=padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),
@@ -93,7 +89,6 @@ def main():
             clientConn.send(cypher_msg)
             privateKey = serialization.load_pem_private_key(key, password=None)
 
-            # Firmo il messaggio con la chiave di sessione, con la mia chiave privata
             try:
                 signature = privateKey.sign(cypher_msg, padding=padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()),
                                                                             salt_length=padding.PSS.MAX_LENGTH),
