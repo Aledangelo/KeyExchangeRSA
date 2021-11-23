@@ -3,12 +3,14 @@
 KeyExchangeRSA consists of two sockets, which implement secure communication via RSA.
 
 ## Requirements
-You will need to install the following packages:
+You will need to install the following python packages:
 * cryptography
 * OpenSSL
 * Socket
 * Datetime
 * Getpass
+You will need to install the following command line tool:
+* openssl
 
 ## Installation
 * pip3 install -r requirements.txt
