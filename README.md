@@ -18,7 +18,7 @@ You will need to install the following packages:
 * The CA keys need to be generated using keyGen.py. You can change the passphrase and certificate data from the code.
 
 ### Step 2
-* Type the following command to create a keystore in pkcs12 format:
+Type the following command to create a keystore in pkcs12 format:
 * openssl pkcs12 -export -in <CAcertificate> -inkey <CAkey> -out keystore.pkcs12
  
 ### Step 3 
@@ -26,4 +26,4 @@ You will need to install the following packages:
 * Using the function present in signCSR.py, and specifying the CA certificate appropriately, we will sign the server (or client) certificate.
  
 ### Step 4
-* The last step is to configure the two sockets, specifying the ip address and port of both the client.
+The last step is to configure the two sockets, specifying the ip address and port of both the client.
