@@ -2,7 +2,13 @@
 ## Overview
 KeyExchangeRSA consists of two sockets, which implement secure communication via RS.
 
-## Installation
+## Requirements
 You will need to install the following packages:
+· cryptography
+· OpenSSL
+· Socket
+· Datetime
+· Getpass
 
-cicico \leq cicic
+## Installation
+ pip3 -r install requirements.txt
