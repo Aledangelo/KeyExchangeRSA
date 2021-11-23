@@ -1,2 +1,10 @@
-## KeyExchangeRSA
-By using two sockets and the functions present in the cryptography package, symmetric and asymmetric encryption secure communication has been implemented
+# KeyExchangeRSA
+## Overview
+KeyExchangeRSA consists of two sockets, which implement secure communication via RS.
+
+## Installation
+You will need to install the following packages:
+ \begin{itemize}
+ \item uno
+ \item due
+ \end{itemize}
