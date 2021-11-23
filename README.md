@@ -4,7 +4,5 @@ KeyExchangeRSA consists of two sockets, which implement secure communication via
 
 ## Installation
 You will need to install the following packages:
- \begin{itemize}
- \item uno
- \item due
- \end{itemize}
+
+cicico \leq cicic
