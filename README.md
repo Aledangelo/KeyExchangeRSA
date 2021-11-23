@@ -15,5 +15,10 @@ You will need to install the following packages:
 
 ## How to use
 ### Step 1
-The CA keys need to be generated using keyGen.py
-· python3 keyGen.py
+The CA keys need to be generated using keyGen.py. You can change the passphrase and certificate data from the code.
+
+### Step 2
+Type the following command to create a keystore in pkcs12 format:
+openssl pkcs12 -export -in <CAcertificate> -inkey <CAkey> -out keystore.pkcs12
+ 
+### Step 3 
