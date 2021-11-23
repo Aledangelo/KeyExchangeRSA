@@ -14,3 +14,6 @@ You will need to install the following packages:
  pip3 install -r requirements.txt
 
 ## How to use
+### Step 1
+The CA keys need to be generated using keyGen.py
+· python3 keyGen.py
