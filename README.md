@@ -12,3 +12,5 @@ You will need to install the following packages:
 
 ## Installation
  pip3 install -r requirements.txt
+
+## How to use
