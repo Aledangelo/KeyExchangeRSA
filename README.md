@@ -16,6 +16,7 @@ You will need to install the following command line tool:
 ## Installation
 * pip3 install -r requirements.txt
  
+ 
 * sudo apt update | sudo apt install build-essential checkinstall zlib1g-dev -y
 * wget http://www.openssl.org/source/openssl-1.0.1g.tar.gz
 * tar -xvzf openssl-1.0.1g.tar.gz
