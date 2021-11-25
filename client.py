@@ -76,9 +76,9 @@ def main():
 
         try:
             verifica(certs)
-            print('\nCertificate is not secure')
-        except:
             print('\nCertificate is secure')
+        except:
+            print('\nCertificate is not secure')
             sock.close()
             quit(0)
 
