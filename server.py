@@ -54,7 +54,7 @@ def recvAndDecrypt(socket, key):
 
 
 def main():
-    pswd = getpass('Enter pass phrase for key.pem: ')
+    pswd = getpass('Enter pass phrase for keyStore: ')
 
     sock = socket()
     sock.bind((ipaddress, port))
