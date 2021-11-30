@@ -60,7 +60,7 @@ def cryptAndSend(socket, key, message):
 
 
 def main():
-    pswd = getpass('Enter pass phrase for key.pem: ')
+    pswd = getpass('Enter pass phrase for keyStore: ')
 
     sock = socket()
     sock.connect((host, port))
