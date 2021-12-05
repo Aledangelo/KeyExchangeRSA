@@ -44,7 +44,6 @@ def pad(message):
 
 
 def cryptAndSend(socket, key, message):
-
     paddedMessage = pad(message=message)
 
     iv = urandom(16)
@@ -60,43 +59,67 @@ def cryptAndSend(socket, key, message):
 
 
 def main():
-    pswd = getpass('Enter pass phrase for keyStore: ')
+    pswd = getpass('Enter pass phrase for key.pem: ')
 
     sock = socket()
     sock.connect((host, port))
     print(f'\nClient conneted on port {port}')
     try:
 
-        with open("keyStore.p12", "rb") as f:
+        with open("keystoreCL.p12", "rb") as f:
             key, cert = extract_certificate_and_key(f.read(), password=pswd.encode())
 
         sock.send(cert)
-        certificate = sock.recv(1220)
-        certs = x509.load_pem_x509_certificate(certificate, default_backend())
+        privateKey = serialization.load_pem_private_key(key, password=None)
 
         try:
-            verifica(certs)
-            print('\nCertificate is secure')
+            signature = privateKey.sign(cert, padding=padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                                                                  salt_length=padding.PSS.MAX_LENGTH),
+                                        algorithm=hashes.SHA256())
+        except Exception as e:
+            print(e)
+            sock.close()
+            quit(1)
+
+        sock.send(signature)
+        certificate = sock.recv(1220)
+        signature2 = sock.recv(1220)
+        certs = x509.load_pem_x509_certificate(certificate, default_backend())
+        try:
+            (certs.public_key().verify(signature=signature2, data=certificate, padding=padding.
+                                       PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                                           salt_length=padding.PSS.MAX_LENGTH),
+                                       algorithm=hashes.SHA256()))
         except:
+            print('Messaggio corrotto')
+            sock.close()
+            quit(0)
+
+        try:
+            verifica(certificate)
+            print('\nCertificate is secure')
+        except Exception as e:
             print('\nCertificate is not secure')
+            print(f'\n {e}')
             sock.close()
             quit(0)
 
         cypherMsg = sock.recv(256)
         signature = sock.recv(256)
-        privateKey = serialization.load_pem_private_key(key, password=None)
 
         try:
             (certs.public_key().verify(signature=signature, data=cypherMsg, padding=padding.
-                                       PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
+                                       PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                                           salt_length=padding.PSS.MAX_LENGTH),
                                        algorithm=hashes.SHA256()))
         except:
-            print('Message is corrupt')
+            print('Messaggio corrotto')
             sock.close()
             quit(0)
 
-        sessionKey = (privateKey.decrypt(ciphertext=cypherMsg, padding=padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                                                                                    algorithm=hashes.SHA256(), label=None)))
+        sessionKey = (
+            privateKey.decrypt(ciphertext=cypherMsg, padding=padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                                                                          algorithm=hashes.SHA256(), label=None)))
 
         text = input('Insert Secret Message: ')
         cryptAndSend(socket=sock, key=sessionKey, message=text)
