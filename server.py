@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 from OpenSSL import crypto
 from getpass import getpass
 
+# Change this!
 ipaddress = 'ipServer'
 port = 1234
 
@@ -16,7 +17,7 @@ port = 1234
 def verifica(serverCert):
     server_cert = crypto.load_certificate(crypto.FILETYPE_PEM, serverCert)
 
-    root_cert = crypto.load_certificate(crypto.FILETYPE_PEM, open(r'certificateCA.pem').read())
+    root_cert = crypto.load_certificate(crypto.FILETYPE_PEM, open(r'certificateCA2.pem').read())
 
     store = crypto.X509Store()
     store.add_cert(root_cert)
@@ -54,7 +55,7 @@ def recvAndDecrypt(socket, key):
 
 
 def main():
-    pswd = getpass('Enter pass phrase for keyStore: ')
+    pswd = getpass('Enter pass phrase for key.pem: ')
 
     sock = socket()
     sock.bind((ipaddress, port))
@@ -64,37 +65,65 @@ def main():
     try:
         keep_alive = True
         while keep_alive:
+            # Prendo la socket del client, l'indirizzo ip e la porta
 
             (clientConn, clientAdd) = sock.accept()
 
+            # Ricevo il certificato dal client
             certificate = clientConn.recv(1220)
+            signature = clientConn.recv(1220)
             certs = x509.load_pem_x509_certificate(certificate, default_backend())
+            try:
+                (certs.public_key().verify(signature=signature, data=certificate, padding=padding.
+                                           PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                                               salt_length=padding.PSS.MAX_LENGTH),
+                                           algorithm=hashes.SHA256()))
+            except:
+                print('Messaggio corrotto')
+                sock.close()
+                quit(0)
 
             try:
                 verifica(certificate)
                 print('\nCertificate is secure')
-            except:
+            except Exception as e:
                 print('\nCertificate is not secure')
+                print(f'\n {e}')
                 sock.close()
                 quit(0)
 
-            with open("keystore.p12", "rb") as f:
+            # Estraggo il mio certificato e la mia chiave, ed invio il certificato
+            with open("keystoreSE.p12", "rb") as f:
                 key, cert = extract_certificate_and_key(f.read(), password=pswd.encode())
-            clientConn.send(cert)
 
+            clientConn.send(cert)
+            privateKey = serialization.load_pem_private_key(key, password=None)
+            try:
+                signature = privateKey.sign(cert, padding=padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                                                                      salt_length=padding.PSS.MAX_LENGTH),
+                                            algorithm=hashes.SHA256())
+            except Exception as e:
+                print(e)
+                sock.close()
+                quit(1)
+            clientConn.send(signature)
+
+            # Genero una chiave simmetrica e la cifro con la chiave pubblica del client
             sessionKey = urandom(16)
             cypher_msg = certs.public_key().encrypt(plaintext=sessionKey,
                                                     padding=padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),
                                                                          algorithm=hashes.SHA256(), label=None))
             clientConn.send(cypher_msg)
-            privateKey = serialization.load_pem_private_key(key, password=None)
 
+            # Firmo il messaggio con la chiave di sessione, con la mia chiave privata
             try:
                 signature = privateKey.sign(cypher_msg, padding=padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA256()),
                                                                             salt_length=padding.PSS.MAX_LENGTH),
                                             algorithm=hashes.SHA256())
                 clientConn.send(signature)
             except Exception as e:
+                sock.close()
+                quit(1)
                 print(e)
 
             print(f'\n{clientAdd[0]} is connected')
