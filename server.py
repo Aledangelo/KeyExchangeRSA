@@ -9,7 +9,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 from OpenSSL import crypto
 from getpass import getpass
 
-# Change this!
+# Change this!!
 ipaddress = 'ipServer'
 port = 1234
 
